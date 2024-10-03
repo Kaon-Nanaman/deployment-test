@@ -50,6 +50,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !failure() }}
     steps:
+      - name: Sleep for 30 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '30s'
+        
       - name: Approve deployment if author is part of the team
         uses: actions/github-script@v6
         with:
@@ -61,7 +66,7 @@ jobs:
             });
             
             try {
-              await github.rest.actions.reviewPendingDeploymentsForRun({
+              await github.rest.actions.reviewPendingDeploymentsForRun({r
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 run_id: context.runId,
