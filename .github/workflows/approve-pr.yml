@@ -5,7 +5,7 @@ on:
 jobs:
   check_branch:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/test' && github.ref != 'refs/heads/master'
+    if: github.ref != 'refs/heads/test' && github.ref != 'refs/heads/main'
     steps:
       - name: run
         run: |
@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Set Environment
         run: |
-          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             echo "environment_name=Production" >> $GITHUB_ENV
           elif [ "${{ github.ref }}" = "refs/heads/test" ]; then
             echo "environment_name=Test" >> $GITHUB_ENV
