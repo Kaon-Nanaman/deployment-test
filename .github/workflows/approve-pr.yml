@@ -53,7 +53,7 @@ jobs:
       - name: Sleep for 30 seconds
         uses: jakejarvis/wait-action@master
         with:
-          time: '20s'
+          time: '30s'
         
       - name: Approve deployment if author is part of the team
         uses: actions/github-script@v6
@@ -65,7 +65,13 @@ jobs:
               repo: context.repo.repo
             });
 
-            console.log(`${JSON.stringify(data)}`);
+            const { data: test } = await github.actions.getPendingDeploymentsForRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+
+            console.log(`${JSON.stringify(test)}`);
             
             try {
               await github.rest.actions.reviewPendingDeploymentsForRun({
