@@ -75,7 +75,7 @@ jobs:
                 repo: context.repo.repo,
                 run_id: context.runId,
                 state: 'approved',
-                environment_ids: data.environments.find(env => env.name === '${{ needs.set_environment.outputs.env_name }}').id,
+                environment_ids: [data.environments.find(env => env.name === '${{ needs.set_environment.outputs.env_name }}').id],
                 comment: "Deployment approved automatically by team membership."
               });
             } catch (error) {
