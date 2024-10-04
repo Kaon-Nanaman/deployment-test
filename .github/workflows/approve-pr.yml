@@ -78,7 +78,7 @@ jobs:
             console.log(`${JSON.stringify(test)}`);
             
             try {
-              await github.rest.actions.reviewPendingDeploymentsForRun({
+              const response = await github.rest.actions.reviewPendingDeploymentsForRun({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 run_id: context.runId,
@@ -86,6 +86,8 @@ jobs:
                 environment_ids: [steps.get-environments.outputs.ENVIRONMENTS.find(env => env.name === '${{ needs.set_environment.outputs.env_name }}').id],
                 comment: "Deployment approved automatically by team membership."
               });
+
+              console.log(response);
             } catch (error) {
               console.log(`${JSON.stringify(error)}`);
             }
