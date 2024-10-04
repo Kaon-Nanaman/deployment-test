@@ -76,6 +76,8 @@ jobs:
             });
 
             console.log(`${JSON.stringify(test)}`);
+
+            console.log(`${JSON.stringify(steps.get-environments.outputs.ENVIRONMENTS)}`)
             
             try {
               const response = await github.rest.actions.reviewPendingDeploymentsForRun({
