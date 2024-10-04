@@ -87,7 +87,7 @@ jobs:
                 comment: "Deployment approved automatically by team membership."
               });
 
-              console.log(response);
+              console.log(`done: ${JSON.stringify(response)}`);
             } catch (error) {
               console.log(`${JSON.stringify(error)}`);
             }
