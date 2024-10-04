@@ -50,17 +50,25 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !failure() }}
     steps:
-        
-      - name: Approve deployment if author is part of the team
+
+      - name: Get Environments
         uses: actions/github-script@v6
+        id: get-environments
         with:
-          github-token: ${{ secrets.PR_APPROVER }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { data } = await github.rest.repos.getAllEnvironments({
               owner: context.repo.owner,
               repo: context.repo.repo
             });
 
+            core.setOutput('ENVIRONMENTS', data.environments);
+        
+      - name: Approve deployment if author is part of the team
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.PR_APPROVER }}
+          script: |
             const { data: test } = await github.rest.actions.getPendingDeploymentsForRun({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -75,7 +83,7 @@ jobs:
                 repo: context.repo.repo,
                 run_id: context.runId,
                 state: 'approved',
-                environment_ids: [data.environments.find(env => env.name === '${{ needs.set_environment.outputs.env_name }}').id],
+                environment_ids: [steps.get-environments.outputs.ENVIRONMENTS.find(env => env.name === '${{ needs.set_environment.outputs.env_name }}').id],
                 comment: "Deployment approved automatically by team membership."
               });
             } catch (error) {
