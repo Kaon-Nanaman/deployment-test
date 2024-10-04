@@ -54,7 +54,7 @@ jobs:
       - name: Approve deployment if author is part of the team
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.REPO_ORG_TOKEN }}
+          github-token: ${{ secrets.REPO_TOKEN }}
           script: |
             const { data } = await github.rest.repos.getAllEnvironments({
               owner: context.repo.owner,
