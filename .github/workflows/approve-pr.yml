@@ -77,7 +77,7 @@ jobs:
 
             console.log(`${JSON.stringify(test)}`);
 
-            const environments = JSON.parse(steps.get-environments.outputs.ENVIRONMENTS);
+            const environments = JSON.parse(`${{ steps.get-environments.outputs.ENVIRONMENTS }}`);
             console.log(`${JSON.stringify(environments)}`);
             
             try {
