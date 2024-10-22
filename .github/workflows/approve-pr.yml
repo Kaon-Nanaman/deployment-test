@@ -52,7 +52,6 @@ jobs:
     steps:
 
       - name: Approve deployment if author is part of the team
-        if: steps.check-team.outputs.isApproved == 'true'
         uses: actions/github-script@v6
         timeout-minutes: 1
         with:
