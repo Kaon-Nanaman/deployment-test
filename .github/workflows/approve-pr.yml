@@ -48,25 +48,25 @@ jobs:
   approve_deployment:
     needs: set_environment
     runs-on: ubuntu-latest
-    if: ${{ !failure() }}
+    if: ${{ !failure() && github.ref == 'refs/heads/main' }}
     steps:
       - name: Approve deployment if author is part of the team
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data } = await github.rest.repos.getAllEnvironments({
+            const environmentResponse = await github.rest.repos.getEnvironment({
               owner: context.repo.owner,
-              repo: context.repo.repo
-            });
-            
+              repo: context.repo.repo,
+              environment_name: 'Production'
+
             try {
               await github.rest.actions.reviewPendingDeploymentsForRun({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 run_id: context.runId,
                 state: 'approved',
-                environment_ids: [data.environments.find(env => env.name === '${{ needs.set_environment.outputs.env_name }}').id],
+                environment_ids: [environmentResponse.data.id],
                 comment: "Deployment approved automatically by team membership."
               });
             } catch (error) {
