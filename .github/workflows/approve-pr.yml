@@ -50,15 +50,19 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !failure() && github.ref == 'refs/heads/main' }}
     steps:
+
       - name: Approve deployment if author is part of the team
+        if: steps.check-team.outputs.isApproved == 'true'
         uses: actions/github-script@v6
+        timeout-minutes: 1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.tsos_gh_actions_token }}
           script: |
             const environmentResponse = await github.rest.repos.getEnvironment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               environment_name: 'Production'
+            })
 
             try {
               await github.rest.actions.reviewPendingDeploymentsForRun({
