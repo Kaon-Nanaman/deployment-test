@@ -69,7 +69,7 @@ jobs:
               run_id: context.runId,
             });
             console.log(`${JSON.stringify(test)}`);
-            console.log(`${JSON.stringify(nvironmentResponse.data)}`);
+            console.log(`${JSON.stringify(environmentResponse.data)}`);
 
             try {
               await github.rest.actions.reviewPendingDeploymentsForRun({
