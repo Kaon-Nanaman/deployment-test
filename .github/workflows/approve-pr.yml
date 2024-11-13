@@ -1,6 +1,8 @@
 name: DEPLOY to Airflow
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '* * * * *' # UTC Deployments at 11:00 AM and 3:00 PM PST from Monday - Thursday
 
 jobs:
   check_branch:
@@ -50,8 +52,49 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !failure() && github.ref == 'refs/heads/main' }}
     steps:
+
+      - name: Check if the author is part of the required team
+        id: check-team
+        uses: actions/github-script@v6
+        timeout-minutes: 1
+        with:
+          github-token: ${{ secrets.tsos_gh_actions_token }}
+          script: |
+            if (!context.payload.sender) {
+              core.setOutput('isApproved', true);
+              console.log('Scheduled run. Approving deployment.');
+              return;
+            }
+
+            const author = context.payload.sender.login;
+            const org = context.repo.owner; // Your GitHub organization
+            const teamSlug = 'dataanalytics-analytics-core-pr-approvers';
+            
+            try {
+              // Check if the author is part of the team
+              const { data } = await github.rest.teams.getMembershipForUserInOrg({
+                org: org,
+                team_slug: teamSlug,
+                username: author
+              })
+
+
+              const isPartOfTeam = data.state === 'active';
+              
+              if (isPartOfTeam) {
+                core.setOutput('isApproved', true);
+                console.log(`${author} is part of the team '${teamSlug}'. Approving deployment.`);
+              } else {
+                core.setOutput('isApproved', false);
+                console.log(`${author} membership to the team '${teamSlug} is ${data.state}'. Deployment needs manual approval.`);
+              }
+            } catch (error) {
+              core.setOutput('isApproved', false);
+              console.log(`${author} is NOT part of the team '${teamSlug}'. Deployment needs manual approval.`);
+            }
         
       - name: Approve deployment if author is part of the team
+        if: steps.check-team.outputs.isApproved == 'true'
         uses: actions/github-script@v6
         timeout-minutes: 1
         with:
