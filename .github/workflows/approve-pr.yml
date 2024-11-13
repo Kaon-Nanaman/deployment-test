@@ -58,7 +58,7 @@ jobs:
         uses: actions/github-script@v6
         timeout-minutes: 1
         with:
-          github-token: ${{ secrets.tsos_gh_actions_token }}
+          github-token: ${{ secrets.PR_APPROVER }}
           script: |
             if (!context.payload.sender) {
               core.setOutput('isApproved', true);
