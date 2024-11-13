@@ -2,7 +2,7 @@ name: DEPLOY to Airflow
 on:
   workflow_dispatch:
   schedule:
-    - cron: '* * * * *' # UTC Deployments at 11:00 AM and 3:00 PM PST from Monday - Thursday
+    - cron: '*/5 * * * *'  # Trigger every minute (with a 5-minute minimum interval enforced)
 
 jobs:
   check_branch:
